@@ -6,20 +6,24 @@
 
 | Skill | 描述 | 触发词 |
 |-------|------|--------|
+| [cve-http-filter](./cve-http-filter/) | 从 GitHub CVE 文档筛选远程 HTTP 可触发漏洞 | 筛选远程HTTP漏洞, CVE筛选发企业微信, 跑一次新的CVE |
 | [pcap-generator](./pcap-generator/) | 生成 PCAP 文件用于 Suricata 测试 | 生成PCAP, create PCAP, generate packet capture |
 
 ## 📁 目录结构
 
 ```
 yixuan_skills/
-├── pcap-generator/          # PCAP 文件生成工具
-│   ├── SKILL.md            # Skill 定义文件
-│   ├── settings.ini        # 配置文件
-│   └── scripts/            # 脚本目录
+├── cve-http-filter/        # CVE 远程 HTTP 漏洞筛选工具
+│   └── SKILL.md
+├── pcap-generator/        # PCAP 文件生成工具
+│   ├── SKILL.md
+│   ├── settings.ini
+│   └── scripts/
 │       ├── generate_pcap.py
 │       └── generate_pcap_direct.py
-├── README.md               # 本文件
-└── .gitignore              # Git 忽略规则
+├── README.md
+├── CLAUDE.md
+└── .gitignore
 ```
 
 ## 🚀 使用方法
