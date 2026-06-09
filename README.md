@@ -1,86 +1,105 @@
 # Yixuan Skills
 
-个人 Skills 集合，包含在 Claude Code 中注册使用的各种自定义技能。
+个人 Claude Code Skills 集合，用于安全相关的自动化任务。
 
-## 📦 当前 Skills
+## 📦 Skills 列表
 
-| Skill | 描述 | 触发词 |
-|-------|------|--------|
-| [daily-cve-report](./daily-cve-report/) | 自动从 NVD 获取 CVSS ≥ 7.0 高危漏洞，生成安全报告并推送企业微信 | 今日CVE, 生成CVE报告, 安全漏洞报告, 每日安全报告 |
-| [cve-http-filter](./cve-http-filter/) | 从 GitHub CVE 文档筛选远程 HTTP 可触发漏洞 | 筛选远程HTTP漏洞, CVE筛选发企业微信, 跑一次新的CVE |
-| [pcap-generator](./pcap-generator/) | 生成 PCAP 文件用于 Suricata 测试 | 生成PCAP, create PCAP, generate packet capture |
+### daily-cve-report
+自动从 NVD 获取过去 24 小时发布的 CVSS >= 7.0 高危漏洞，生成格式化安全报告。
+
+| 项目 | 说明 |
+|------|------|
+| 目录 | `daily-cve-report/` |
+| 依赖 | Python 3.8+, `requests` |
+| 输出 | Markdown 格式 CVE 报告 |
+
+**触发词：** `今日 CVE`, `生成 CVE 报告`, `安全漏洞报告`, `每日安全报告`
+
+**快速开始：**
+```bash
+cd daily-cve-report/scripts
+pip install -r requirements.txt
+python3 main.py
+```
+
+---
+
+### cve-http-filter
+从 GitHub CVE 文档筛选远程 HTTP 可触发的漏洞（AV:N + HTTP 可触发）。
+
+**触发词：** `筛选远程HTTP漏洞`, `CVE筛选发企业微信`, `跑一次新的 CVE`
+
+---
+
+### pcap-generator
+生成 PCAP 文件用于 Suricata 规则测试。
+
+**触发词：** `生成PCAP`, `create PCAP`, `generate packet capture`
+
+---
 
 ## 📁 目录结构
 
 ```
 yixuan_skills/
-├── daily-cve-report/       # CVE 每日安全报告工具
-│   └── SKILL.md
-├── cve-http-filter/        # CVE 远程 HTTP 漏洞筛选工具
-│   └── SKILL.md
-├── pcap-generator/        # PCAP 文件生成工具
+├── daily-cve-report/          # CVE 每日报告
 │   ├── SKILL.md
-│   ├── settings.ini
+│   ├── .env.example
 │   └── scripts/
-│       ├── generate_pcap.py
-│       └── generate_pcap_direct.py
+│       ├── fetch_cves.py       # NVD API 抓取 + 分页 + 重试
+│       ├── format_report.py    # Markdown 格式化
+│       ├── main.py             # 主入口
+│       └── requirements.txt
+├── cve-http-filter/            # CVE HTTP 筛选
+│   └── SKILL.md
+├── pcap-generator/             # PCAP 生成
+│   └── SKILL.md
 ├── README.md
 ├── CLAUDE.md
 └── .gitignore
 ```
 
-## 🚀 使用方法
+## 🔧 配置
 
-Skills 通过 Claude Code 的 `/skills` 命令管理。
+### daily-cve-report 环境变量
 
-### 查看已安装的 Skills
-
-```bash
-/skills
-```
-
-### 在新环境中恢复 Skills
-
-将仓库克隆到本地后，参考各个 Skill 的 SKILL.md 进行配置和注册。
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `HTTP_PROXY` / `HTTPS_PROXY` | 代理地址（可选） | 无 |
+| `NVD_API_URL` | NVD API 地址 | 官方地址 |
+| `MIN_CVSS_SCORE` | 最低 CVSS 评分 | 7.0 |
+| `CVE_OUTPUT_FILE` | 输出文件名 | cve_report.md |
 
 ## ➕ 添加新 Skill
 
-添加新的 Skill 时，建议遵循以下目录结构：
+创建目录并添加 `SKILL.md`：
 
-```
+```bash
 <skill-name>/
-├── SKILL.md        # Skill 定义（必需）：名称、描述、触发词、工作流
-├── settings.ini    # 配置文件（如需要）
-└── scripts/        # 脚本目录（如需要）
-```
-
-### SKILL.md 模板
-
-```markdown
----
-name: <skill-name>
-description: <一句话描述 Skill 的功能>
----
-
-# <Skill 名称>
-
-详细描述...
-
-## 触发词
-- <触发词1>
-- <触发词2>
-
-## 工作流
-1. <步骤1>
-2. <步骤2>
-
-## 配置（如需要）
-...
+├── SKILL.md        # 必需：name, description, triggers
+└── scripts/        # 可选：Python 脚本
 ```
 
 ## 📝 规范
 
-- 每个 Skill 独立一个目录
-- SKILL.md 中必须包含 `name` 和 `description`
-- 配置文件使用 `.ini` 格式
-- 敏感信息（如 API keys）不要提交到仓库
+- 每个 Skill 独立目录
+- SKILL.md 必须包含 `name` 和 `description`
+- 敏感信息不提交（使用 `.env.example` 模板）
+- Python 代码使用 `logging` 而非 `print()`
+- 配置通过环境变量而非硬编码
+
+## 🚀 使用方法
+
+```bash
+# 克隆仓库
+git clone https://github.com/your-repo/yixuan_skills.git
+
+# 进入目录
+cd yixuan_skills/daily-cve-report/scripts
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 运行
+python3 main.py
+```

@@ -191,13 +191,13 @@ Connection: close
 For complex cases like multipart form uploads, use the direct generation script instead of the web API:
 
 ```bash
-# 使用 web_apps 的虚拟环境
-/Users/xuan/SEC/tstools/.venv/bin/python3 scripts/generate_pcap_direct.py [请求内容] [响应内容] [输出文件名]
+# 使用项目的虚拟环境
+/path/to/your-venv/bin/python3 scripts/generate_pcap_direct.py [请求内容] [响应内容] [输出文件名]
 ```
 
 **示例：生成 POST 文件上传 PCAP**
 ```python
-/Users/xuan/SEC/tstools/.venv/bin/python3 << 'PYEOF'
+/path/to/your-venv/bin/python3 << 'PYEOF'
 import sys
 sys.path.insert(0, 'scripts')
 from generate_pcap_direct import generate_pcap, fix_content_length, fix_response_length
