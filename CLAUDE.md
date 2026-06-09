@@ -37,6 +37,7 @@ yixuan_skills/
 直接用自然语言触发，如 "今日 CVE"、"生成 CVE 报告"、"安全漏洞报告"
 
 **内部实现（Python 脚本）：**
+
 ```bash
 cd daily-cve-report/scripts
 pip install -r requirements.txt

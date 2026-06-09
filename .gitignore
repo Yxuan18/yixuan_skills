@@ -25,3 +25,8 @@ build/
 
 # Generated CVE reports
 cve_report.md
+
+# Test environments
+.test-venv/
+venv/
+.venv/
