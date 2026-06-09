@@ -90,16 +90,40 @@ yixuan_skills/
 
 ## 🚀 使用方法
 
+### 安装 Skills
+
+将仓库克隆到本地后，在 Claude Code 中安装：
+
 ```bash
 # 克隆仓库
-git clone https://github.com/your-repo/yixuan_skills.git
+git clone https://github.com/Yxuan18/yixuan_skills.git
 
-# 进入目录
-cd yixuan_skills/daily-cve-report/scripts
+# 进入 Claude Code 项目目录
+cd your-project/
 
-# 安装依赖
-pip install -r requirements.txt
+# 链接 skills 到项目（推荐：项目级安装）
+ln -s /path/to/yixuan_skills/daily-cve-report ./skills/
 
-# 运行
-python3 main.py
+# 或安装到全局
+cp -r /path/to/yixuan_skills/* ~/.claude/skills/
+```
+
+### 使用 Skills
+
+安装后，通过自然语言触发：
+
+| Skill | 触发方式 |
+|-------|----------|
+| daily-cve-report | `今日 CVE`、`生成 CVE 报告`、`安全漏洞报告` |
+| cve-http-filter | `帮我筛选远程HTTP漏洞`、`跑一次新的 CVE` |
+| pcap-generator | `生成PCAP`、`create PCAP`、`test Suricata` |
+
+### 配置（可选）
+
+部分 Skill 支持环境变量配置，参考各目录的 `.env.example`：
+
+```bash
+# 在项目根目录创建 .env 文件
+cp yixuan_skills/daily-cve-report/.env.example .env
+# 编辑 .env 填入代理地址等配置
 ```

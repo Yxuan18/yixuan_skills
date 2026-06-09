@@ -33,8 +33,10 @@ yixuan_skills/
 
 自动从 NVD 获取过去 24 小时发布的 CVSS >= 7.0 高危漏洞，生成格式化安全报告。
 
-**使用方法：**
+**作为 Claude Code Skill 使用：**
+直接用自然语言触发，如 "今日 CVE"、"生成 CVE 报告"、"安全漏洞报告"
 
+**内部实现（Python 脚本）：**
 ```bash
 cd daily-cve-report/scripts
 pip install -r requirements.txt
