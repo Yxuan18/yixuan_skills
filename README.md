@@ -6,6 +6,7 @@
 
 | Skill | 描述 | 触发词 |
 |-------|------|--------|
+| [daily-cve-report](./daily-cve-report/) | 自动从 NVD 获取 CVSS ≥ 7.0 高危漏洞，生成安全报告并推送企业微信 | 今日CVE, 生成CVE报告, 安全漏洞报告, 每日安全报告 |
 | [cve-http-filter](./cve-http-filter/) | 从 GitHub CVE 文档筛选远程 HTTP 可触发漏洞 | 筛选远程HTTP漏洞, CVE筛选发企业微信, 跑一次新的CVE |
 | [pcap-generator](./pcap-generator/) | 生成 PCAP 文件用于 Suricata 测试 | 生成PCAP, create PCAP, generate packet capture |
 
@@ -13,6 +14,8 @@
 
 ```
 yixuan_skills/
+├── daily-cve-report/       # CVE 每日安全报告工具
+│   └── SKILL.md
 ├── cve-http-filter/        # CVE 远程 HTTP 漏洞筛选工具
 │   └── SKILL.md
 ├── pcap-generator/        # PCAP 文件生成工具
