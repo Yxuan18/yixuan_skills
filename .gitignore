@@ -22,3 +22,6 @@ build/
 
 # Logs
 *.log
+
+# Generated CVE reports
+cve_report.md
