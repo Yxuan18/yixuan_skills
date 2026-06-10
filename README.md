@@ -45,6 +45,20 @@
 - `API.md` — `generate_pcap_direct.py` 函数接口
 - `TROUBLESHOOTING.md` — 常见问题处理
 
+### mail-qq
+通过 QQ 邮箱 SMTP 发送邮件，支持 HTML / plain 正文、抄送、附件，可从本地文件读取邮件正文。
+
+| 触发词 | 说明 |
+|--------|------|
+| `发送邮件`、`发邮件` | 发送简单邮件 |
+| `发送邮件通知` | 发送带通知内容的邮件 |
+| `QQ mail` | QQ 邮箱发送 |
+
+**文档：**
+- `SKILL.md` — 触发词 + 快速启动
+- `CONFIG.md` — 环境变量 + 授权码说明
+- `TROUBLESHOOTING.md` — 常见问题处理
+
 ## 目录结构
 
 ```
@@ -73,6 +87,13 @@ yixuan_skills/
 │   └── scripts/
 │       ├── generate_pcap.py           # Web API 封装
 │       └── generate_pcap_direct.py  # scapy 直接生成
+├── mail-qq/
+│   ├── SKILL.md
+│   ├── CONFIG.md              # 环境变量 + 授权码说明
+│   ├── TROUBLESHOOTING.md
+│   ├── .env.example
+│   └── scripts/
+│       └── mail_qq.py        # SMTP 发送 + CLI
 ├── README.md
 ├── CLAUDE.md
 └── .gitignore
