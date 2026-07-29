@@ -59,6 +59,19 @@
 - `CONFIG.md` — 环境变量 + 授权码说明
 - `TROUBLESHOOTING.md` — 常见问题处理
 
+### cnnvd-format
+将 CNNVD（中国国家信息安全漏洞库）新格式 XML 转换为旧格式（标签重命名 + 结构归一），转换前可选择性删除 `<PAV>` 节点。
+
+| 触发词 | 说明 |
+|--------|------|
+| `CNNVD 转换`、`cnnvd convert` | 新格式转旧格式 |
+| `CNNVD PAV 移除`、`去除 CNNVD PAV` | 删除 `<PAV>` 节点 |
+
+**文档：**
+- `SKILL.md` — 触发词 + 快速启动
+- `CONFIG.md` — 环境要求 + 可移植性说明
+- `TROUBLESHOOTING.md` — 常见问题处理
+
 ## 目录结构
 
 ```
@@ -94,6 +107,14 @@ yixuan_skills/
 │   ├── .env.example
 │   └── scripts/
 │       └── mail_qq.py        # SMTP 发送 + CLI
+├── cnnvd-format/
+│   ├── SKILL.md
+│   ├── CONFIG.md              # 环境要求 + 可移植性
+│   ├── TROUBLESHOOTING.md
+│   └── scripts/
+│       ├── process_cnnvd.py         # 主入口：完整管道
+│       ├── remote_pav.py            # 流式删除 <PAV> 节点
+│       └── transform_cnnvd_xml.py   # 新格式转旧格式
 ├── README.md
 ├── CLAUDE.md
 └── .gitignore
