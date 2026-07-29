@@ -10,6 +10,7 @@
 | **cve-http-filter** | 从 GitHub CVE 文档筛选远程 HTTP 可触发漏洞（AV:N） | `筛选远程HTTP漏洞`、`CVE筛选发企业微信` |
 | **pcap-generator** | 生成 PCAP 文件用于 Suricata 规则测试 | `生成PCAP`、`simulate HTTP traffic` |
 | **mail-qq** | 通过 QQ 邮箱 SMTP 发送邮件，支持 HTML/附件/抄送 | `发送邮件`、`发邮件通知` |
+| **cnnvd-format** | 将 CNNVD 新格式 XML 转换为旧格式（标签重命名 + 结构归一），可选择性删除 `<PAV>` 节点 | `CNNVD 转换`、`去除 CNNVD PAV` |
 
 ---
 
