@@ -3,58 +3,72 @@
 # generate_pcap.py - Helper script for PCAP generation via web app API
 # Reads configuration from settings.ini
 
+import configparser
 import os
 import sys
-import configparser
-import urllib.request
-import urllib.parse
+import tempfile
 import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SETTINGS_FILE = os.path.join(SCRIPT_DIR, 'settings.ini')
+SCRIPT_DIR = Path(__file__).parent.resolve()
+SETTINGS_FILE = SCRIPT_DIR / "settings.ini"
 
-def load_config():
-    """Load settings from settings.ini"""
+
+def load_config() -> configparser.ConfigParser:
+    """Load settings from settings.ini, with cross-platform defaults."""
     config = configparser.ConfigParser()
-    if os.path.exists(SETTINGS_FILE):
+    if SETTINGS_FILE.exists():
         config.read(SETTINGS_FILE)
-        return config
     else:
-        # Return defaults if settings.ini not found
-        config['webapp'] = {
-            'host': 'localhost',
-            'port': '9900',
-            'base_url': 'http://localhost:9900'
+        config["webapp"] = {
+            "host": "localhost",
+            "port": "9900",
+            "base_url": "http://localhost:9900",
         }
-        config['output'] = {
-            'default_dir': '/tmp',
-            'pcap_dir': 'pcaps'
+        config["output"] = {
+            "default_dir": str(Path(tempfile.gettempdir())),
+            "pcap_dir": "pcaps",
         }
-        return config
+    return config
 
-def check_webapp(config):
-    """Check if web app is running"""
-    base_url = config.get('webapp', 'base_url')
+
+def check_webapp(config: configparser.ConfigParser) -> tuple[bool, str]:
+    """Check if web app is running."""
+    base_url = config.get("webapp", "base_url")
     health_url = f"{base_url}/health"
 
     try:
         with urllib.request.urlopen(health_url, timeout=5) as response:
             if response.status == 200:
                 return True, base_url
-    except Exception as e:
+    except urllib.error.URLError as e:
         return False, str(e)
 
     return False, "Cannot connect to web app"
 
-def generate_pcap(request_body, response_body, filename=None, config=None):
+
+def _get_default_dir(config: configparser.ConfigParser) -> Path:
+    """Get default output directory, cross-platform safe."""
+    configured = config.get("output", "default_dir", fallback="")
+    if configured:
+        p = Path(configured)
+    else:
+        p = Path(tempfile.gettempdir())
+    p.mkdir(parents=True, exist_ok=True)
+    return p
+
+
+def generate_pcap(request_body: str, response_body: str, filename: str | None = None, config: configparser.ConfigParser | None = None) -> tuple[bool, str, str | None]:
     """
     Generate PCAP file via web app API.
 
     Args:
         request_body: Raw HTTP request string
         response_body: Raw HTTP response string
-        filename: Output filename (optional, auto-generated if not provided)
-        config: ConfigParser object (optional, loads from settings.ini if not provided)
+        filename:      Output filename (optional, auto-generated if not provided)
+        config:        ConfigParser object (optional, loads from settings.ini if not provided)
 
     Returns:
         Tuple of (success, message, filepath)
@@ -62,67 +76,61 @@ def generate_pcap(request_body, response_body, filename=None, config=None):
     if config is None:
         config = load_config()
 
-    # Check web app status
     is_running, base_url = check_webapp(config)
     if not is_running:
         return False, f"Web app not running: {base_url}", None
 
-    # Generate filename if not provided
     if not filename:
         from datetime import datetime
-        filename = datetime.now().strftime('%H%M%S')
+        filename = datetime.now().strftime("%H%M%S")
 
-    # Prepare form data
-    boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW'
+    # Generate a unique boundary to avoid mismatch with web app
+    import secrets
+    boundary = secrets.token_hex(16)
 
     # Build multipart form data
     data_parts = []
-
-    # Request body field
-    data_parts.append(f'--{boundary}\r\n')
+    data_parts.append(f"--{boundary}\r\n")
     data_parts.append('Content-Disposition: form-data; name="request_body"\r\n\r\n')
-    data_parts.append(request_body + '\r\n')
-
-    # Response body field
-    data_parts.append(f'--{boundary}\r\n')
+    data_parts.append(request_body + "\r\n")
+    data_parts.append(f"--{boundary}\r\n")
     data_parts.append('Content-Disposition: form-data; name="response_body"\r\n\r\n')
-    data_parts.append(response_body + '\r\n')
-
-    # Filename field
-    data_parts.append(f'--{boundary}\r\n')
+    data_parts.append(response_body + "\r\n")
+    data_parts.append(f"--{boundary}\r\n")
     data_parts.append('Content-Disposition: form-data; name="file_name"\r\n\r\n')
-    data_parts.append(filename + '\r\n')
+    data_parts.append(filename + "\r\n")
+    data_parts.append(f"--{boundary}--\r\n")
 
-    data_parts.append(f'--{boundary}--\r\n')
-
-    body = ''.join(data_parts)
+    body = "".join(data_parts)
 
     try:
-        # Send request
         req = urllib.request.Request(
             f"{base_url}/generate_pcap",
-            data=body.encode('utf-8'),
+            data=body.encode("utf-8"),
             headers={
-                'Content-Type': f'multipart/form-data; boundary={boundary}',
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
             },
-            method='POST'
+            method="POST",
         )
 
         with urllib.request.urlopen(req, timeout=30) as response:
-            # Follow redirect to download
-            final_url = response.url
-            output_dir = config.get('output', 'default_dir')
-            filepath = os.path.join(output_dir, f"{filename}.pcap")
+            output_dir = _get_default_dir(config)
+            filepath = output_dir / f"{filename}.pcap"
 
-            with open(filepath, 'wb') as f:
+            with open(filepath, "wb") as f:
                 f.write(response.read())
 
-            return True, f"PCAP saved to {filepath}", filepath
+            return True, f"PCAP saved to {filepath}", str(filepath)
 
-    except Exception as e:
-        return False, f"Error: {str(e)}", None
+    except urllib.error.HTTPError as e:
+        return False, f"HTTP error {e.code}: {e.reason}", None
+    except urllib.error.URLError as e:
+        return False, f"Connection error: {e.reason}", None
+    except OSError as e:
+        return False, f"File write error: {e}", None
 
-def main():
+
+def main() -> None:
     if len(sys.argv) < 3:
         print("Usage: generate_pcap.py <request_file> <response_file> [filename]")
         print("  Or use stdin for request/response:")
@@ -135,24 +143,21 @@ def main():
 
     config = load_config()
 
-    # Read request body
-    if request_file == '-':
+    if request_file == "-":
         request_body = sys.stdin.read()
     else:
-        with open(request_file, 'r') as f:
-            request_body = f.read()
+        request_body = Path(request_file).read_text(encoding="utf-8")
 
-    # Read response body
-    if response_file == '-':
+    if response_file == "-":
         response_body = sys.stdin.read()
     else:
-        with open(response_file, 'r') as f:
-            response_body = f.read()
+        response_body = Path(response_file).read_text(encoding="utf-8")
 
     success, message, filepath = generate_pcap(request_body, response_body, filename, config)
 
     print(message)
     sys.exit(0 if success else 1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

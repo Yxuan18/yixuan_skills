@@ -18,7 +18,7 @@ triggers:
 
 ### 配置凭证
 
-复制配置文件并填入你的 QQ 邮箱信息：
+> **安全提示**：授权码是敏感凭证。请通过 `.env` 文件或环境变量传入，**不要**硬编码在脚本或命令行中。`.env` 文件已在项目 `.gitignore` 中忽略，不会被提交到仓库。
 
 ```bash
 cp mail-qq/.env.example mail-qq/.env

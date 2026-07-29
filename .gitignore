@@ -30,3 +30,8 @@ cve_report.md
 .test-venv/
 venv/
 .venv/
+
+# Test artifacts
+tests/
+.pytest_cache/
+requirements-test.txt

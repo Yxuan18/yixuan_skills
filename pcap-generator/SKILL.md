@@ -16,7 +16,34 @@ triggers:
 
 ## 快速启动
 
-### 方式一：Web API（推荐简单场景）
+### 方式一：直接生成（推荐，跨平台支持）
+
+直接用 scapy 生成，不依赖 web app，Linux/Windows 均可用：
+
+```bash
+cd pcap-generator/scripts
+
+# 从文件生成
+python generate_pcap_direct.py request.txt response.txt output
+
+# 使用模板生成（无需准备文件）
+python generate_pcap_direct.py --template \
+  --method GET --path /api/test \
+  --status "200 OK" --body "Hello World" \
+  --output-dir ./pcaps \
+  myfile
+```
+
+环境变量（可选）：
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `PCAP_SRC_IP` | 源 IP | `192.168.0.1` |
+| `PCAP_DST_IP` | 目标 IP | `192.168.0.2` |
+| `PCAP_SRC_MAC` | 源 MAC | 内部默认 |
+| `PCAP_DST_MAC` | 目标 MAC | 内部默认 |
+
+### 方式二：Web API（依赖 web app）
 
 先启动 web app：
 
@@ -24,33 +51,31 @@ triggers:
 cd /path/to/web_apps && python app.py
 ```
 
-然后用 curl 生成：
+然后调用 `generate_pcap.py`：
 
 ```bash
-BASE_URL=$(grep base_url settings.ini | cut -d'=' -f2 | tr -d ' ')
-curl -s -L -o output.pcap \
-  -F "request_body=GET /path HTTP/1.1\nHost: example.com\n\n" \
-  -F "response_body=HTTP/1.1 200 OK\nContent-Length: 5\n\nhello" \
-  -F "file_name=myfile" \
-  -F "generate=生成" \
-  "${BASE_URL}/generate_pcap"
+python scripts/generate_pcap.py request.txt response.txt myfile
 ```
 
-### 方式二：直接生成（推荐复杂场景）
+## 输出目录
 
-直接用 scapy 生成，不依赖 web app：
+- **方式一**（`generate_pcap_direct.py`）：默认使用系统临时目录
+  - Linux/macOS：`/tmp`
+  - Windows：`%TEMP%`（通常是 `C:\Users\<user>\AppData\Local\Temp`）
+  - 可用 `--output-dir` 或环境变量覆盖
 
-```bash
-python3 scripts/generate_pcap_direct.py [请求内容] [响应内容] [输出文件名]
-```
+- **方式二**（`generate_pcap.py`）：从 `settings.ini` 读取 `output.default_dir`，无配置时使用系统临时目录
 
 ## 配置
 
-`settings.ini` 中配置 web app 地址：
+`settings.ini` 中配置 web app 地址（方式二专用）：
 
 ```ini
 [webapp]
 base_url = http://localhost:9900
+
+[output]
+default_dir = /tmp  # Windows 上建议改为 C:\temp 或留空使用系统默认
 ```
 
 ## 常见模式

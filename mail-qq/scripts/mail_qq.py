@@ -80,14 +80,37 @@ def build_message(
 
 
 def attach_file(msg: EmailMessage, file_path: str) -> None:
-    """将本地文件附加到邮件消息。"""
+    """将本地文件附加到邮件消息。
+
+    如果消息还不是 multipart（Python 3.14 中 EmailMessage 没有 make_multipart），
+    则重建为 MIMEMultipart 并保留原正文内容。
+    """
+    if not msg.is_multipart():
+        # Save existing content
+        existing_payload = msg.get_payload()
+        existing_ct = msg.get_content_type()
+        existing_subtype = existing_ct.split("/")[-1] if "/" in existing_ct else "plain"
+        # Rebuild as multipart container
+        new_msg = MIMEMultipart()
+        # Copy headers from original
+        for key, val in msg.items():
+            if key.lower() not in ("content-type", "content-transfer-encoding", "mime-version"):
+                new_msg[key] = val
+        # Restore original body
+        if existing_payload:
+            new_msg.attach(MIMEText(existing_payload, existing_subtype, "utf-8"))
+        # Replace the original message's internal state
+        msg._payload = new_msg._payload
+        msg._headers = new_msg._headers
+        msg._policy = new_msg.policy
+
     with open(file_path, "rb") as f:
         data = f.read()
     filename = basename(file_path)
     if filename.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp")):
         mime = MIMEImage(data)
     else:
-        mime = MIMEApplication(data)
+        mime = MIMEApplication(data, _subtype=filename.rsplit(".", 1)[-1] if "." in filename else "octet-stream")
     mime.add_header("Content-Disposition", "attachment", filename=filename)
     msg.attach(mime)
 

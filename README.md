@@ -2,7 +2,16 @@
 
 个人 Claude Code Skills 集合，用于安全相关的自动化任务。
 
-## Skills 列表
+## Skills 总览
+
+| Skill | 功能 | 触发词示例 |
+|-------|------|-----------|
+| **daily-cve-report** | 从 NVD 获取 CVSS ≥ 7.0 高危漏洞，生成安全日报 | `今日 CVE`、`生成 CVE 报告` |
+| **cve-http-filter** | 从 GitHub CVE 文档筛选远程 HTTP 可触发漏洞（AV:N） | `筛选远程HTTP漏洞`、`CVE筛选发企业微信` |
+| **pcap-generator** | 生成 PCAP 文件用于 Suricata 规则测试 | `生成PCAP`、`simulate HTTP traffic` |
+| **mail-qq** | 通过 QQ 邮箱 SMTP 发送邮件，支持 HTML/附件/抄送 | `发送邮件`、`发邮件通知` |
+
+---
 
 ### daily-cve-report
 自动从 NVD 获取过去 24 小时发布的 CVSS >= 7.0 高危漏洞，生成格式化安全报告。

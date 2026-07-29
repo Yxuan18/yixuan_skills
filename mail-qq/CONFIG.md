@@ -28,14 +28,14 @@ QQ 邮箱发送需要使用**授权码**而非登录密码：
 ## .env 示例
 
 ```bash
-# 发件人
-FROM_ADDR=502551073@qq.com
-FROM_PASSWORD=swifiuqjgtgebjff
+# 发件人（请替换为你的实际信息）
+FROM_ADDR=your_qq@qq.com
+FROM_PASSWORD=your_auth_code_here
 
-# 收件人
-TO_ADDR=921086829@qq.com,736804181@qq.com
+# 收件人（多个用逗号分隔）
+TO_ADDR=recipient@example.com
 
-# SMTP 配置
+# SMTP 配置（通常不需要修改）
 SMTP_SERVER=smtp.qq.com
 SMTP_PORT=587
 
@@ -43,6 +43,17 @@ SMTP_PORT=587
 SUBJECT=每日简报
 BODY_FILE=today_brief.html
 ```
+
+## 安全注意事项
+
+> **重要**：授权码是敏感凭证，请遵循以下原则：
+
+- **不要**将真实凭证提交到 git 仓库。`.env` 文件已在 `.gitignore` 中忽略。
+- **不要**把凭证硬编码在脚本或命令行参数中——环境变量和 `.env` 文件是安全的做法。
+- **不要**在 CI/CD 日志或错误消息中输出 `FROM_PASSWORD`。
+- 如果凭证泄露，立即前往 QQ 邮箱网页重新生成授权码（旧的立即失效）。
+
+获取授权码：登录 [mail.qq.com](https://mail.qq.com) → 设置 → 账户 → POP3/IMAP/SMTP/Exchange/CardDAV/CalDAV服务 → 开启 SMTP 服务 → 发送短信验证。
 
 ## 文件结构
 
