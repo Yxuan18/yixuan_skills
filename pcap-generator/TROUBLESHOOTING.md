@@ -1,3 +1,7 @@
+---
+description: pcap-generator 常见问题处理，含 HTTP 格式错误、Content-Length 修复、PCAP 打开失败解决
+---
+
 # 常见问题
 
 ## Web app 未运行

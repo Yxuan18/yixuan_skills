@@ -1,3 +1,7 @@
+---
+description: mail-qq 环境变量配置和 QQ 邮箱授权码获取指南
+---
+
 # 配置
 
 ## 环境变量
@@ -35,7 +39,7 @@ FROM_PASSWORD=your_auth_code_here
 # 收件人（多个用逗号分隔）
 TO_ADDR=recipient@example.com
 
-# SMTP 配置（通常不需要修改）
+# SMTP 配置（默认端口为 587，无需修改）
 SMTP_SERVER=smtp.qq.com
 SMTP_PORT=587
 

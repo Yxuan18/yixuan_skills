@@ -1,3 +1,7 @@
+---
+description: cnnvd_format 常见问题处理，含 XML 解析失败、PAV 未闭合、Import Error 解决
+---
+
 # 常见问题
 
 ## XML 解析失败
@@ -6,7 +10,7 @@
 错误：XML 解析失败：not well-formed (invalid token): line N, column M
 ```
 
-通常原因：
+常见原因：
 
 - 标签未闭合（最常见的来源就是未成对的 `<PAV>`，建议先用 `remote_pav.py` 单独跑一遍）
 - 特殊字符未转义（`<` / `&` 出现在文本里）
@@ -31,16 +35,16 @@ python3 -c "import xml.etree.ElementTree as ET; ET.parse('input.xml')"
 `remote_pav.py` 在 buffer 超过 10 MB 时报错：
 
 ```
-Buffer 超过 10.0MB，可能存在未闭合标签
+Buffer 超过 10.0MB，说明存在未闭合标签
 ```
 
-这意味着存在 `<PAV>` 开始标签但没有对应的 `</PAV>`。可能原因：
+这意味着存在 `<PAV>` 开始标签但没有对应的 `</PAV>`。常见原因：
 
 - 输入文件被人为截断
 - PAV 节点内部嵌套了同名标签（脚本不做嵌套识别,只看字符串匹配）
 - 编码被破坏，导致 `<PAV>` 字节序列跨字符边界
 
-处理：人工检查源 XML,或调大 `remote_pav.py` 内的 `max_buffer_size`（不推荐常规调整）。
+处理：人工检查源 XML，或调大 `remote_pav.py` 内的 `max_buffer_size`（仅用于调试）。
 
 ## 中文环境输出乱码
 

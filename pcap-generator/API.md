@@ -1,3 +1,7 @@
+---
+description: generate_pcap_direct.py 函数接口文档，含参数类型、返回值和 Python 调用示例
+---
+
 # 直接生成 API
 
 `generate_pcap_direct.py` 直接调用 scapy 生成 PCAP，不依赖 web app。适合复杂场景（如 multipart 上传）。
@@ -68,4 +72,4 @@ print(f"PCAP: {output_path}")
 python3 scripts/generate_pcap_direct.py [请求内容] [响应内容] [输出文件名] [--output-dir /tmp]
 ```
 
-直接传参时，内容会被当作普通字符串处理。如需多行内容，建议用 Python 方式调用。
+直接传参时，内容会被当作普通字符串处理。多行内容请用 Python 方式调用。

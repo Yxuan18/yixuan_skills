@@ -35,3 +35,6 @@ venv/
 tests/
 .pytest_cache/
 requirements-test.txt
+
+# nlpm generated artifacts
+.claude/nlpm-history.json

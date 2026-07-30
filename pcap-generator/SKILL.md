@@ -61,7 +61,7 @@ python scripts/generate_pcap.py request.txt response.txt myfile
 
 - **方式一**（`generate_pcap_direct.py`）：默认使用系统临时目录
   - Linux/macOS：`/tmp`
-  - Windows：`%TEMP%`（通常是 `C:\Users\<user>\AppData\Local\Temp`）
+  - Windows：`%TEMP%`（默认路径为 `C:\Users\<user>\AppData\Local\Temp`）
   - 可用 `--output-dir` 或环境变量覆盖
 
 - **方式二**（`generate_pcap.py`）：从 `settings.ini` 读取 `output.default_dir`，无配置时使用系统临时目录
